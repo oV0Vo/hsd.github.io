@@ -12,7 +12,7 @@ github_repo: "https://github.com/oV0Vo/oV0Vo.github.io.git" # you code repositor
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "好好学习，天天向上"
-sidebar-avatar: /img/jiaban.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: img/yinhun.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
