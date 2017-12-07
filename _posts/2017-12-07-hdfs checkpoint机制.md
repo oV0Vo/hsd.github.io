@@ -15,7 +15,9 @@ tags:
 
 
 # hdfs中文件系统元数据
+
 首先，我们来看下namenode是怎么持久化元数据的
+
 ![](img/hdfs_namenode.png)
 
 从高层看，namenode的主要责任是存储hdfs的命名空间，比如说目录树，文件权限，文件到块id的映射。安全地将这些元数据（以及对它的改变）持久化到可靠存储对于保证可用性来说是至关重要的
@@ -28,7 +30,7 @@ A typical edit ranges from 10s to 100s of bytes，但随着时间的推移edit l
 
 checkpointing是将fsimage和editlog组装成一个新的fsimage的过程，这样，namenode可以直接载入fsimage最后的内存状态，这是一个更高效的操作，降低了namenode的启动时间。
 
-![](img/hdfs_checkpoint)
+![](img/hdfs_checkpoint.png)
 
 然而，创建一个新的fsimage是一个很消耗io和cpu的操作，有时花费上好几分钟。在checkpoint过程中，namesystem需要限制来自其他用户的并发访问。因此，与其暂停活跃的namenode，hdfs将这个操作推给secondary namenode或者叫standy namenode取决于nameonde高可用是否配置了。这两种情况我们都会讨论
 
@@ -52,7 +54,7 @@ standby namenode通过周期性地重放active namenode写到共享edit文件夹
 # SecondaryNameNode上的Checkpointing
 在一个非HA的部署中，checkpointing通过SecondaryNameNode而不是standby Namenode完成的。因为没有共享的edits文件夹或自动tailing edit日志，SecondaryNameNode不得不经过一些更多的步骤，即在继续相同的基本步骤之前进行namespace视图更新。
 
-![](img/hdfs_checkpoint_non_ha.png)
+![](/img/hdfs_checkpoint_non_ha.png)
 
 这里，NameNode简写做NN，SecondaryNameNode简写做2NN:
 1. 2NN检查两个先决条件是否被满足：…
