@@ -35,7 +35,7 @@ println("Number of visits to non-subscribed topics: " + offTopicVisits)
 }
 </pre>
 &emsp;下图解释了join操作会产生的网络传输，每一次join操作都会产生一次如下的传输，图中每一个小块对应于RDD的一个分区
-![](img/spark_join.png)
+![](/img/spark_join.png)
 &emsp;如果我们对userData一开始就进行partitionBy操作，将userData的数据进行分区（spark一开始并不知道原始数据文件是否有经过良好分区），即定义一个partitioner，然后rdd.partitionBy(partitioner)
 <pre>
 val sc = new SparkContext(...)
@@ -44,7 +44,7 @@ val userData = sc.sequenceFile[UserID, UserInfo]("hdfs://...")
                  .persist()
 </pre>
 &emsp;那么join操作产生的网络传输将会变成这样，由于我们已经对userData进行分区了，那么join操作不会移动userData而是将eventsData shuffle到相应的userData的分区（使用userData的partitioner）
-![](img/spark_join_optimized.png)
+![](/img/spark_join_optimized.png)
 &emsp;如果两个rdd的partitioner相等（对象的equals方法），那么join操作压根就不会移动数据
 
 # 其他会从partitioner中受益的操作

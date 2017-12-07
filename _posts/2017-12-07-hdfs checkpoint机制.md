@@ -18,7 +18,7 @@ tags:
 
 首先，我们来看下namenode是怎么持久化元数据的
 
-![](img/hdfs_namenode.png)
+![](/img/hdfs_namenode.png)
 
 从高层看，namenode的主要责任是存储hdfs的命名空间，比如说目录树，文件权限，文件到块id的映射。安全地将这些元数据（以及对它的改变）持久化到可靠存储对于保证可用性来说是至关重要的
 文件系统元数据使用两种不同的形式进行存储：fsimage和edit log。fsimage表示文件系统元数据在某个时间点的快照，然而，虽然fsimage的文件格式能很高效地读取，却不适合making小的增量的更新比如说重命名一个文件。因此，namenode将修改操作记录到editlog中而不是一有改变就写fsimage。这样，如果namenode宕机了，可以首先将fsimage载入然后将editlog中记录的操作重放，以赶上系统最新的状态。editlog由一系列的文件组成，叫做edit log段（segments），一起表示自从fsimage创建以来的所有对namesystem的修改。
@@ -30,7 +30,7 @@ A typical edit ranges from 10s to 100s of bytes，但随着时间的推移edit l
 
 checkpointing是将fsimage和editlog组装成一个新的fsimage的过程，这样，namenode可以直接载入fsimage最后的内存状态，这是一个更高效的操作，降低了namenode的启动时间。
 
-![](img/hdfs_checkpoint.png)
+![](/img/hdfs_checkpoint.png)
 
 然而，创建一个新的fsimage是一个很消耗io和cpu的操作，有时花费上好几分钟。在checkpoint过程中，namesystem需要限制来自其他用户的并发访问。因此，与其暂停活跃的namenode，hdfs将这个操作推给secondary namenode或者叫standy namenode取决于nameonde高可用是否配置了。这两种情况我们都会讨论
 
@@ -43,7 +43,7 @@ checkpointing和ha设置比起来要简单得多，因此，我们先讨论
 
 standby namenode通过周期性地重放active namenode写到共享edit文件夹中的新edit，维持着一个相对较新的命名空间。结果就是，checkpoingting就是简单地检查两个先决条件中满足了哪个，保存命名空间到一个新的fsimage（大致等同于执行hdfs dfsadmin –saveNamespace命令行），然后通过http传输新的fsimage到active namenode
 	
-![](img/hdfs_checkpoint_ha.png)
+![](/img/hdfs_checkpoint_ha.png)
 
 这里，standby namenode简写为SbNN，Active NameNode简写为ANN：
 1. Sbnn检查是否满足了两个先决条件中的一个：上次checkpoint依赖经过的时间或累计的edits的数量
