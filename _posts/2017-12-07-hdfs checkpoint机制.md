@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      kafka设计——官方文档翻译
+title:      hdfs checkpoint机制
 date:       2017-12-07
 author:     hsd
 header-img: img/post-bg-os-metro.jpg
